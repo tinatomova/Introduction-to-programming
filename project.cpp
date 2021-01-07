@@ -1,192 +1,84 @@
-/**
-*  
-* Solution to course project # 2
-* Introduction to programming course
-* Faculty of Mathematics and Informatics of Sofia University
-* Winter semester 2020/2021
-*
-* @author Tina Tomova
-* @idnumber 62594
-* @compiler VC
-*
-* <main>
-*
-*/
-
-#include <iostream>
 #include <fstream>
+#include <vector>
 #include <stack>
 #include <queue>
-#include <math.h>
 using namespace std;
-
-int precedence(string str);
-bool isOperator(string str);
-
-int main() 
-{
+int precedence(char arr[], int i);
+int precedence(char i);
+bool isOperator(char arr[], int i);
+bool isOperator(char i);
+int main() {
 	char arr[100];
 	cin >> arr;
-
-	stack<string>s;
-	queue<string>q;
-
-	string str;
+	stack<char>s;
+	queue<char>q;
 	for (int i = 0; i < strlen(arr); i++) {
-		for (int j = i; j < strlen(arr); j++) {
-			if (isdigit(arr[j])) {
-				str.push_back(arr[j]);
-			}
-			else {
-				if (str.length() == 0) {
-					str.push_back(arr[j]);
-					break;
-				}
-				if (str.length() > 0) {
-					break;
-				}
-			}
+		if (isdigit(arr[i])) {
+			q.push(arr[i]);
 		}
-		//sy
-		if (isdigit(str[0])) {
-			q.push(str);
-		}
-		else if (isOperator(str)) {
-			if (s.empty()) s.push(str);
-			else {
-				string tops = s.top();				
-				if (precedence(str) > precedence(tops)) {
-					s.push(str);
-				}
-				if (precedence(str) == precedence(tops) && precedence(tops) == 3) {
-					s.push(str);
-				}
-				if (((precedence(tops) > precedence(str))
-					|| ((precedence(tops) == precedence(str)) && ((precedence(str) == 1 || precedence(str) == 2))))
-					&& (s.top() != "(")) {
-					q.push(tops);
-					s.pop();
-					s.push(str);
-				}
-
-			}
-
-		}
-		else if (str == "(") {
-			s.push(str);
-		}
-		else if (str == ")") {
-			while (s.top() != "(") {
-				string tops = s.top();
-				q.push(tops);
-				s.pop();
-
-			}
-			if (s.top() == "(") {
+		else if (isOperator(arr,i)) {
+			char temp = s.top();
+			while ((isOperator(temp)==1) && ((precedence(temp)>precedence(arr,i))||((precedence(temp) == precedence(arr, i))&&(precedence(arr,i)==1 || precedence(arr, i) == 2))) && (s.top()!='(')) {
+				q.push(temp);
 				s.pop();
 			}
 		}
+		else if (arr[i] == '(') {
+			s.push(arr[i]);
+		}
+		else if (arr[i] == ')') {
+			while (s.top() != '(') {
+				char temp=s.top();
+				q.push(temp);
+				s.pop();
 
-		//sy close
-		i = i + str.length() - 1;
-		str.clear();
+			}
+			if (s.top() == '(') {
+				s.pop();
+			}
+		}
 	}
 	while (s.empty() == 0) {
-		string temp1 = s.top();
+		char temp1 = s.top();
 		q.push(temp1);
 		s.pop();
 
 	}
-	/*while (q.empty() == 0) {
-		cout << q.front()<<endl;
-		q.pop();
-	}
-	*/
-	stack<double>calc;
-	while (!q.empty()) {
-		string frontq = q.front();
-		if (isdigit(frontq[0])) {
-			int number = 0;
-			for (int i = 0; i <= frontq.length; i++) {
-				number += (frontq[i] - 48) * pow(10, frontq.length() - 1 - i);				
-			}
-			cout << number;
-			calc.push(number);
-
-		}
-		else if (isOperator(frontq)) {
-			if (frontq == "+") {
-				double a = calc.top();
-				//cout << a << endl;
-				calc.pop();
-				double b = calc.top();
-				//cout << b << endl;
-				calc.pop();
-				calc.push(b + a);
-				//cout << calc.top()<<endl;
-			}
-			/*if (frontq == '-') {
-				double a = calc.top() - 48;
-				//cout << a << endl;
-				calc.pop();
-				double b = calc.top() - 48;
-				//cout << b << endl;
-				calc.pop();
-				calc.push(b - a + 48);
-
-			}
-			if (frontq == '*') {
-				double a = calc.top() - 48;
-				//cout << a << endl;
-				calc.pop();
-				double b = calc.top() - 48;
-				//cout << b << endl;
-				calc.pop();
-				calc.push(b * a + 48);
-				//cout << calc.top()<<endl;
-			}
-			if (frontq == '/') {
-				double a = calc.top() - 48;
-				if (a == 0) {
-					cout << "Can't devide by 0!";
-					return 0;
-				}
-				calc.pop();
-				double b = calc.top() - 48;
-				calc.pop();
-				calc.push(b / a + 48);
-			}
-			if (frontq == '^') {
-				double a = calc.top() - 48;
-				calc.pop();
-				double b = calc.top() - 48;
-				calc.pop();
-				double temp = pow(b, a);
-				calc.push(temp + 48);
-			}*/
-		}
-		q.pop();
-	}
-	cout<<calc.top();
 	
-
-
 }
+int precedence(char arr[], int i) {
+	if (arr[i] == '+' || arr[i] == '-') 
+		return 1;
+	if (arr[i] == '*' || arr[i] == '/') 
+		return 2;
+	if (arr[i] == '^') 
+		return 3;
+	else return 0;
 
-
-bool isOperator(string str) {
-	if (str == "+" || str == "-" || str == "*" || str == "/" || str == "^") {
+	
+}
+bool isOperator(char arr[], int i) {
+	if (arr[i] == '+' || arr[i] == '-' || arr[i] == '*' || arr[i] == '/' || arr[i] == '^') {
 		return 1;
 	}
 	else return 0;
+		
 
+	
 }
-int precedence(string str) {
-	if (str == "+" || str == "-")
+bool isOperator(char i) {
+	if (i == '+' || i == '-' || i == '*' || i == '/' || i == '^') {
 		return 1;
-	if (str == "*" || str == "/")
+	}
+	else return 0;
+	
+}
+int precedence(char i) {
+	if (i == '+' || i == '-')
+		return 1;
+	if (i == '*' || i == '/')
 		return 2;
-	if (str == "^")
+	if (i == '^')
 		return 3;
 	else return 0;
 
