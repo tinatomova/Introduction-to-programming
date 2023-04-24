@@ -1,4 +1,8 @@
-# Calculator
-Calculator is c++ program reading mathematic equation from file and implementing shunting-yard alghoritm. Then calculating mathematic equation in reverse polish notanation.
-## Usage
-Type .txt file path.
+Да се състави програма калкулатор, която да може да чете от файл аритметичен израз, който съдържа цели числа и следните математически операции:
+събиране (+);
+изваждане (-);
+умножение (*);
+деление (/);
+степенуване (^);
+скоби ().
+В резултат от изпълнението на програмата да се връща като резултат числото получено след изчисляване на израза.
